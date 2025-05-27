@@ -38,6 +38,7 @@ module.exports = {
       patterns: [
         { from: 'manifest.json', to: '.' },
         { from: 'icons', to: 'icons' },
+        { from: 'service-worker.js', to: '' },
       ],
     }),
     ...(isProduction ? [new MiniCssExtractPlugin({ filename: '[name].[contenthash].css' })] : []),

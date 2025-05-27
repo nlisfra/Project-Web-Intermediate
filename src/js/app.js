@@ -46,10 +46,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error('Gagal mengambil cerita lokal:', err);
   }
 
+  // Tentukan basePath sesuai environment (production atau development)
+  // Ganti sesuai publicPath di webpack config
+  const isProduction = window.location.hostname !== 'localhost';
+  const basePath = isProduction ? '/Project-Web-Intermediate/' : '/';
+
   // Register service worker & push notification
   if ('serviceWorker' in navigator && 'PushManager' in window) {
     try {
-      const registration = await navigator.serviceWorker.register('/service-worker.js');
+      const registration = await navigator.serviceWorker.register(`${basePath}service-worker.js`);
       console.log('✅ Service Worker terdaftar:', registration);
 
       const swReady = await navigator.serviceWorker.ready;
