@@ -70,42 +70,46 @@ workbox.routing.registerRoute(
   })
 );
 
-self.addEventListener('push', async event => {
-  let data = {};
-  if (event.data) {
-    try {
-      data = event.data.json();
-    } catch (e) {
-      data = { title: 'Notifikasi Baru', message: event.data.text() };
+self.addEventListener('push', event => {
+  const showNotification = async () => {
+    let data = {};
+    if (event.data) {
+      try {
+        data = event.data.json();
+      } catch (e) {
+        data = { title: 'Notifikasi Baru', message: event.data.text() };
+      }
     }
-  }
 
-  console.log('[SW] Push received:', data);
+    console.log('[SW] Push received:', data);
 
-  const title = data.title || 'Notifikasi Baru';
-  const options = {
-    body: data.message || 'Ada pesan baru.',
-    icon: '/icons/icon-192.png',
-    vibrate: [100, 50, 100],
-    data: {
-      dateOfArrival: Date.now(),
-      primaryKey: 1,
-    },
+    const title = data.title || 'Notifikasi Baru';
+    const options = {
+      body: data.message || 'Ada pesan baru.',
+      icon: '/icons/icon-192.png',
+      vibrate: [100, 50, 100],
+      data: {
+        dateOfArrival: Date.now(),
+        primaryKey: 1,
+      },
+    };
+
+    const allClients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    const isAppInFocus = allClients.some(client => client.visibilityState === 'visible' && client.focused);
+
+    console.log('[SW] Clients:', allClients.length);
+    console.log('[SW] App in focus?', isAppInFocus);
+
+    if (isAppInFocus) {
+      allClients.forEach(client => {
+        client.postMessage({ type: 'PUSH_RECEIVED', data });
+      });
+    } else {
+      return self.registration.showNotification(title, options);
+    }
   };
 
-  const allClients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-  const isAppInFocus = allClients.some(client => client.visibilityState === 'visible' && client.focused);
-
-  console.log('[SW] Clients:', allClients.length);
-  console.log('[SW] App in focus?', isAppInFocus);
-
-  if (isAppInFocus) {
-    allClients.forEach(client => {
-      client.postMessage({ type: 'PUSH_RECEIVED', data });
-    });
-  } else {
-    event.waitUntil(self.registration.showNotification(title, options));
-  }
+  event.waitUntil(showNotification());
 });
 
 self.addEventListener('notificationclick', event => {

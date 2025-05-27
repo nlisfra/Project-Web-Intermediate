@@ -1,11 +1,13 @@
 import { router } from "./routes.js";
-import { saveStory, getAllSavedStories, getAllLocalStories } from './model/indexedDB.js';
-import storyView from "./view/storyView.js";
-import { openDB } from 'idb';
+import { getAllLocalStories } from './model/indexedDB.js';
+import updateNavbar from "./navbar.js";
+
+window.addEventListener("load", updateNavbar);
+window.addEventListener("hashchange", updateNavbar);
 
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
   const rawData = atob(base64);
   return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
 }
@@ -13,6 +15,7 @@ function urlBase64ToUint8Array(base64String) {
 function renderCerita(daftarCerita) {
   const container = document.getElementById('cerita-list');
   if (!container) return;
+
   container.innerHTML = '';
 
   if (!daftarCerita || daftarCerita.length === 0) {
@@ -35,6 +38,7 @@ function renderCerita(daftarCerita) {
 document.addEventListener("DOMContentLoaded", async () => {
   router();
 
+  // Render cerita lokal (IndexedDB)
   try {
     const localStories = await getAllLocalStories();
     renderCerita(localStories);
@@ -42,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error('Gagal mengambil cerita lokal:', err);
   }
 
-  // Registrasi service worker dan push notification
+  // Register service worker & push notification
   if ('serviceWorker' in navigator && 'PushManager' in window) {
     try {
       const registration = await navigator.serviceWorker.register('/service-worker.js');
@@ -77,8 +81,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
       };
 
-      const yourAccessToken = localStorage.getItem('token');
-      if (!yourAccessToken) {
+      const token = localStorage.getItem('token');
+      if (!token) {
         alert('❌ Token tidak ditemukan. Silakan login ulang.');
         return;
       }
@@ -87,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${yourAccessToken}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(subscriptionData),
       });
