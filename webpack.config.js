@@ -13,6 +13,8 @@ module.exports = {
     publicPath: isProduction ? '/Project-Web-Intermediate/' : '/',
     clean: true,
   },
+  devtool: isProduction ? 'source-map' : 'cheap-module-source-map',
+  
   module: {
     rules: [
       {
