@@ -1,11 +1,14 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 module.exports = {
   entry: './src/index.js',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    publicPath: isProduction ? '/Project-Web-Intermediate/' : '/',
     clean: true,
   },
   module: {
@@ -30,7 +33,9 @@ module.exports = {
     }),
   ],
   devServer: {
-    static: './',
+    static: {
+      directory: path.resolve(__dirname, './'),
+    },
     port: 8087,
     open: true,
     proxy: {
@@ -42,4 +47,5 @@ module.exports = {
       },
     },
   },
+  mode: isProduction ? 'production' : 'development',
 };
