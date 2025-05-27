@@ -2,21 +2,21 @@
   "name": "My Story App Webpack",
   "short_name": "StoryApp",
   "description": "Story App using Webpack",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#00aaff",
   "orientation": "portrait",
-  "scope": "/",
+  "scope": "./",
   "lang": "id-ID",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
@@ -26,19 +26,19 @@
       "name": "Tambah Cerita",
       "short_name": "Tambah",
       "description": "Tambah cerita baru",
-      "url": "/#/add-story",
-      "icons": [{ "src": "/icons/add-icon.png", "sizes": "192x192" }]
+      "url": "./#/add-story",
+      "icons": [{ "src": "icons/add-icon.png", "sizes": "192x192" }]
     }
   ],
   "screenshots": [
     {
-      "src": "/screenshots/desktop.png",
+      "src": "screenshots/desktop.png",
       "sizes": "1280x720",
       "type": "image/png",
       "platform": "wide"
     },
     {
-      "src": "/screenshots/mobile.png",
+      "src": "screenshots/mobile.png",
       "sizes": "375x667",
       "type": "image/png",
       "platform": "narrow"
