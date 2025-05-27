@@ -1,14 +1,16 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js');
 
 const CACHE_NAME = 'dicoding-cerita-cache-v1';
+const BASE_PATH = '/Project-Web-Intermediate';
+
 const URLS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/src/css/style.css',
-  '/src/js/app.js',
-  '/manifest.json',
-  '/icons/icon-512.png',
-  '/icons/icon-192.png',
+  `${BASE_PATH}/`,
+  `${BASE_PATH}/index.html`,
+  `${BASE_PATH}/src/css/style.css`,
+  `${BASE_PATH}/src/js/app.js`,
+  `${BASE_PATH}/manifest.json`,
+  `${BASE_PATH}/icons/icon-512.png`,
+  `${BASE_PATH}/icons/icon-192.png`,
 ];
 
 // Cache saat install
@@ -44,7 +46,7 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Routing Workbox
+// Workbox routing
 workbox.routing.registerRoute(
   ({ url }) => url.origin === 'https://story-api.dicoding.dev',
   new workbox.strategies.NetworkFirst({ cacheName: 'api-cache' })
@@ -70,6 +72,7 @@ workbox.routing.registerRoute(
   })
 );
 
+// Push notification handler
 self.addEventListener('push', event => {
   const showNotification = async () => {
     let data = {};
@@ -86,7 +89,7 @@ self.addEventListener('push', event => {
     const title = data.title || 'Notifikasi Baru';
     const options = {
       body: data.message || 'Ada pesan baru.',
-      icon: '/icons/icon-192.png',
+      icon: '/Project-Web-Intermediate/icons/icon-192.png',
       vibrate: [100, 50, 100],
       data: {
         dateOfArrival: Date.now(),
@@ -96,9 +99,6 @@ self.addEventListener('push', event => {
 
     const allClients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     const isAppInFocus = allClients.some(client => client.visibilityState === 'visible' && client.focused);
-
-    console.log('[SW] Clients:', allClients.length);
-    console.log('[SW] App in focus?', isAppInFocus);
 
     if (isAppInFocus) {
       allClients.forEach(client => {
@@ -119,11 +119,11 @@ self.addEventListener('notificationclick', event => {
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
       for (const client of clientList) {
-        if (client.url === '/' && 'focus' in client) {
+        if (client.url.includes(BASE_PATH) && 'focus' in client) {
           return client.focus();
         }
       }
-      return clients.openWindow('/');
+      return clients.openWindow(BASE_PATH);
     })
   );
 });
