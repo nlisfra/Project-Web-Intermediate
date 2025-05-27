@@ -2,4 +2,4 @@ Nama: Naili Safira
 Cohort ID : FC319D5X1754
 Kelas: FC-23
 Platform Deploy: GitHub Pages
-URL: 
+URL: https://nlisfra.github.io/Project-Web-Intermediate/
